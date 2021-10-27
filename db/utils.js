@@ -1,3 +1,4 @@
+
 //helper stringify function
 function dbFields(fields) {
   const insert = Object.keys(fields)
