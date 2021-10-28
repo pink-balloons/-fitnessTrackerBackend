@@ -1,3 +1,5 @@
+const client = require("./client");
+
 async function attachActivitiesToRoutines(routines) {
   // no side effects
   const routinesToReturn = [...routines];
@@ -25,6 +27,55 @@ async function attachActivitiesToRoutines(routines) {
       routine.activities = activitiesToAdd;
     }
     return routinesToReturn;
+  } catch (error) {
+    throw error;
+  }
+}
+
+async function getActivityById(id) {
+  try {
+    const { rows: activities } = await client.query(
+      `
+     SELECT * 
+     FROM activities
+     WHERE id = $1
+
+    `,
+      [id]
+    );
+
+    return activity;
+  } catch (error) {
+    throw error;
+  }
+}
+
+async function getAllActivities() {
+  try {
+    const { rows: activities } = await client.query(`
+   
+     SELECT * 
+     FROM activities
+     WHERE id = $1
+   `);
+    return activities;
+  } catch (error) {
+    throw error;
+  }
+}
+
+async function createActivity({ name, description }) {
+  try {
+    const { rows: activities } = client.query(
+      `
+  INSERT INTO activities(name, description)
+  VALUES($1, $2) 
+  ON CONFLICT (name) DO NOTHING
+  RETURNING *;
+        `,
+      [name, description]
+    );
+    return activities;
   } catch (error) {
     throw error;
   }
