@@ -1,6 +1,8 @@
 // require in the database adapter functions as you write them (createUser, createActivity...)
 const { createUser } = require("./");
 const client = require("./client");
+const {createUser} = require('./')
+
 
 async function dropTables() {
   console.log("Dropping All Tables...");
@@ -46,6 +48,7 @@ async function createTables() {
         "isPublic" Boolean DEFAULT false,
         name varchar(255) UNIQUE NOT NULL,
         goal TEXT NOT NULL
+
       );
     `);
 
@@ -56,6 +59,7 @@ async function createTables() {
       "activityId" INTEGER REFERENCES activities(id), 
       duration INTEGER, 
       count INTEGER
+
       );
     `);
 
