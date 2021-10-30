@@ -34,10 +34,12 @@ async function getUser({ username, password }) {
     `,
       [username]
     );
-    console.log(user, "!!!!!!!!!!!");
+
+    
     if (!user) {
       return;
     }
+
     if (user.password !== password) {
       return;
     }
@@ -46,6 +48,8 @@ async function getUser({ username, password }) {
     // }
 
     delete user.password;
+
+    delete user.password
 
     return user;
   } catch (error) {
