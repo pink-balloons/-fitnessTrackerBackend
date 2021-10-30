@@ -1,4 +1,5 @@
 const client = require("./client");
+const { dbFields } = require("./utils");
 
 async function attachActivitiesToRoutines(routines) {
   // no side effects
@@ -80,3 +81,40 @@ async function createActivity({ name, description }) {
     throw error;
   }
 }
+
+async function updateActivity({ id, ...fields }) {
+  try {
+    const toUpDate = {};
+
+    let activity;
+
+    for (const key in fields) {
+      if (fields[key] !== undefined) {
+        toUpDate[key] = fields[key];
+      }
+    }
+
+    const fieldsToUpdate = dbFields(toUpDate);
+    console.log(fieldsToUpdate, "AHHHHH!!!!");
+
+    const { rows: activities } = client.query(
+      `
+          UPDATE activities
+          
+         
+        `,
+      [name, description]
+    );
+    return activity;
+  } catch (error) {
+    throw error;
+  }
+}
+
+module.exports = {
+  attachActivitiesToRoutines,
+  getActivityById,
+  getAllActivities,
+  createActivity,
+  updateActivity,
+};
