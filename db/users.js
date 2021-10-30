@@ -34,11 +34,20 @@ async function getUser({ username, password }) {
     `,
       [username]
     );
-        console.log(password, "PASSWORD LOG")
-        console.log(user.password, "USER PASSWORD LOG")
-    if (user.password !== password) {
-      throw Error("Username or Password is incorrect");
+
+    
+    if (!user) {
+      return;
     }
+
+    if (user.password !== password) {
+      return;
+    }
+    // else {
+    //   throw Error("Invalid username or password");
+    // }
+
+    delete user.password;
 
     delete user.password
 
@@ -94,4 +103,3 @@ module.exports = {
   getUserById,
   getUserByUsername,
 };
-
