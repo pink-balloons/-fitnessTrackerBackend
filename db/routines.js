@@ -4,7 +4,6 @@ async function getRoutineById(id) {
   try {
     const { rows: routine } = await client.query(
       `
-    
     SELECT *
     FROM routines
     WHERE id = $1
@@ -24,9 +23,10 @@ async function getRoutinesWithoutActivities() {
 
 async function getAllRoutines() {
   try {
-    const { rows: routines } = await client.query(`
+    const { rows: [routines] } = await client.query(`
     SELECT * FROM routines
     `);
+    console.log(routines, "ROUTINES LOG")
     return routines;
   } catch (error) {
     console.error("problem with getting all routines");
@@ -35,7 +35,15 @@ async function getAllRoutines() {
 
 async function getAllPublicRoutines() {
   try {
-  } catch (error) {}
+    const {rows: [routines]} = await client.query(`
+    SELECT * FROM routines
+    WHERE "isPublic"='true'
+    `)
+    console.log(routines, "ROUTINES LOG")
+    return routines
+  } catch (error) {
+    console.error("Problem getting all Public routines")
+  }
 }
 
 async function getAllRoutinesByUser({ username }) {
@@ -73,6 +81,8 @@ async function createRoutine({ creatorId, isPublic, name, goal }) {
     `,
       [creatorId, isPublic, name, goal]
     );
+
+    return routine
   } catch (error) {
     console.error("Problem creating routine");
   }
