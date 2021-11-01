@@ -86,8 +86,6 @@ async function updateActivity({ id, ...fields }) {
   try {
     const toUpDate = {};
 
-    let activity;
-
     for (const key in fields) {
       if (fields[key] !== undefined) {
         toUpDate[key] = fields[key];
@@ -96,14 +94,17 @@ async function updateActivity({ id, ...fields }) {
 
     const fieldsToUpdate = dbFields(toUpDate);
     console.log(fieldsToUpdate, "AHHHHH!!!!");
+    // make if else statement field has greader than update then 0 the update set
 
-    const { rows: activities } = client.query(
+    const { rows: activity } = client.query(
       `
           UPDATE activities
-          
+         SET ${fieldsToUpdate.insert} 
+         WHERE id = ${id}
+         returning *;
          
         `,
-      [name, description]
+      fieldsToUpdate.vals
     );
     return activity;
   } catch (error) {
