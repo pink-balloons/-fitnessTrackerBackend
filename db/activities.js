@@ -35,12 +35,11 @@ async function attachActivitiesToRoutines(routines) {
 
 async function getActivityById(id) {
   try {
-    const { rows: activities } = await client.query(
+    const { rows: activity } = await client.query(
       `
      SELECT * 
      FROM activities
      WHERE id = $1
-
     `,
       [id]
     );
@@ -53,11 +52,10 @@ async function getActivityById(id) {
 
 async function getAllActivities() {
   try {
-    const { rows: activities } = await client.query(`
-   
-     SELECT * 
-     FROM activities
-     WHERE id = $1
+    const {
+      rows: [activities],
+    } = await client.query(`
+     SELECT * FROM activities
    `);
     return activities;
   } catch (error) {
@@ -81,6 +79,7 @@ async function createActivity({ name, description }) {
     throw error;
   }
 }
+
 
 async function updateActivity({ id, ...fields }) {
   try {
@@ -118,4 +117,7 @@ module.exports = {
   getAllActivities,
   createActivity,
   updateActivity,
+
+
+
 };
