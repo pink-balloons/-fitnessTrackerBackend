@@ -6,10 +6,18 @@ async function getRoutineById(id) {
       `
     SELECT *
     FROM routines
-    WHERE id = $1
+    WHERE id = $1;
     `,
       [id]
     );
+
+    if (!routine) {
+      throw {
+        name: "RoutineNotFoundError",
+        message: "Could not find a routine with that id",
+      };
+    }
+
     return routine;
   } catch (error) {
     console.error("Problem in getRoutineById");
@@ -18,13 +26,24 @@ async function getRoutineById(id) {
 
 async function getRoutinesWithoutActivities() {
   try {
-  } catch (error) {}
+    const { rows: routines } = await client.query(
+      `
+      SELECT * from routines;
+      `
+    );
+    delete routines.activities;
+    return routines;
+  } catch (error) {
+    console.error("Probelm getting routines without activities");
+  }
 }
 
 async function getAllRoutines() {
   try {
+
     const { rows: [routines] } = await client.query(`
     SELECT * FROM routines
+
     `);
     console.log(routines, "ROUTINES LOG")
     return routines;
@@ -63,9 +82,8 @@ async function getPublicRoutinesByActivity({ id }) {
     const { rows: routine } = await client.query(
       `
     SELECT * from routines 
-    WHERE id = $1
-    `,
-      [id]
+    WHERE id = ${id};
+    `
     );
   } catch (error) {}
 }
@@ -98,8 +116,8 @@ async function destroyRoutine(id) {
     const { rows: routine } = await client.query(
       `
     DELETE * from routines 
-    where id = $1
-    `[id]
+    where id = ${id};
+    `
     );
   } catch (error) {
     console.error("Problem deleting routine");
