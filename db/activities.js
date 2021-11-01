@@ -1,4 +1,5 @@
 const client = require("./client");
+const { dbFields } = require("./utils");
 
 async function attachActivitiesToRoutines(routines) {
   // no side effects
@@ -34,12 +35,11 @@ async function attachActivitiesToRoutines(routines) {
 
 async function getActivityById(id) {
   try {
-    const { rows: activities } = await client.query(
+    const { rows: activity } = await client.query(
       `
      SELECT * 
      FROM activities
      WHERE id = $1
-
     `,
       [id]
     );
@@ -52,11 +52,10 @@ async function getActivityById(id) {
 
 async function getAllActivities() {
   try {
-    const { rows: activities } = await client.query(`
-   
-     SELECT * 
-     FROM activities
-     WHERE id = $1
+    const {
+      rows: [activities],
+    } = await client.query(`
+     SELECT * FROM activities
    `);
     return activities;
   } catch (error) {
@@ -80,3 +79,45 @@ async function createActivity({ name, description }) {
     throw error;
   }
 }
+
+
+async function updateActivity({ id, ...fields }) {
+  try {
+    const toUpDate = {};
+
+    for (const key in fields) {
+      if (fields[key] !== undefined) {
+        toUpDate[key] = fields[key];
+      }
+    }
+
+    const fieldsToUpdate = dbFields(toUpDate);
+    console.log(fieldsToUpdate, "AHHHHH!!!!");
+    // make if else statement field has greader than update then 0 the update set
+
+    const { rows: activity } = client.query(
+      `
+          UPDATE activities
+         SET ${fieldsToUpdate.insert} 
+         WHERE id = ${id}
+         returning *;
+         
+        `,
+      fieldsToUpdate.vals
+    );
+    return activity;
+  } catch (error) {
+    throw error;
+  }
+}
+
+module.exports = {
+  attachActivitiesToRoutines,
+  getActivityById,
+  getAllActivities,
+  createActivity,
+  updateActivity,
+
+
+
+};
