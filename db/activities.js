@@ -1,4 +1,5 @@
 const client = require("./client");
+const { dbFields } = require("./utils");
 
 async function attachActivitiesToRoutines(routines) {
   // no side effects
@@ -79,9 +80,44 @@ async function createActivity({ name, description }) {
   }
 }
 
+
+async function updateActivity({ id, ...fields }) {
+  try {
+    const toUpDate = {};
+
+    for (const key in fields) {
+      if (fields[key] !== undefined) {
+        toUpDate[key] = fields[key];
+      }
+    }
+
+    const fieldsToUpdate = dbFields(toUpDate);
+    console.log(fieldsToUpdate, "AHHHHH!!!!");
+    // make if else statement field has greader than update then 0 the update set
+
+    const { rows: activity } = client.query(
+      `
+          UPDATE activities
+         SET ${fieldsToUpdate.insert} 
+         WHERE id = ${id}
+         returning *;
+         
+        `,
+      fieldsToUpdate.vals
+    );
+    return activity;
+  } catch (error) {
+    throw error;
+  }
+}
+
 module.exports = {
-  createActivity,
+  attachActivitiesToRoutines,
   getActivityById,
   getAllActivities,
-  attachActivitiesToRoutines,
+  createActivity,
+  updateActivity,
+
+
+
 };

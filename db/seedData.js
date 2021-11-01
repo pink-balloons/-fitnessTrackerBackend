@@ -3,7 +3,6 @@ const client = require("./client");
 
 const { createUser, createRoutine } = require("./");
 
-
 async function dropTables() {
   console.log("Dropping All Tables...");
   // drop all tables, in the correct order

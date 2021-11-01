@@ -1,4 +1,3 @@
-
 //helper stringify function
 function dbFields(fields) {
   const insert = Object.keys(fields)
@@ -14,6 +13,7 @@ function dbFields(fields) {
   return { insert, select, vals };
 }
 console.log(dbFields({ name: "Preston", username: "pwallace" }));
+
 module.exports = {
   dbFields,
 };
