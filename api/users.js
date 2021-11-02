@@ -1,4 +1,5 @@
 const express = require("express");
+const { getAllRoutinesByUser } = require("../db");
 const { createUser, getUserByUsername } = require("../db/users");
 const usersRouter = express.Router();
 
@@ -39,5 +40,23 @@ usersRouter.post("/login", (req, res, next) => {
 });
 
 usersRouter.get("/me", (req, res, next) => {
-    
+    try {
+        
+    } catch (error) {
+        throw error
+    }
 })
+
+usersRouter.get("/:username/routines", (req, res, next) => {
+    const {username} = req.params
+    
+    try {
+        const routines = await getAllRoutinesByUser(username)
+
+        res.send(routines)
+    } catch (error) {
+        throw error
+    }
+})
+
+module.exports = usersRouter
