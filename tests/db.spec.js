@@ -125,7 +125,7 @@ describe("Database", () => {
       });
     });
   });
-  describe("Routines", () => {
+  xdescribe("Routines", () => {
     let routineToCreateAndUpdate;
     describe("getActivityById", () => {
       it("gets activities by their id", async () => {
@@ -384,7 +384,7 @@ describe("Database", () => {
         );
         expect(routine).toBeFalsy();
       });
-      it("Deletes all the routine_activities whose routine is the one being deleted.", async () => {
+      xit("Deletes all the routine_activities whose routine is the one being deleted.", async () => {
         const queriedRoutineActivities = await getRoutineActivitiesByRoutine(
           routineToCreateAndUpdate
         );
@@ -392,7 +392,7 @@ describe("Database", () => {
       });
     });
   });
-  describe("Routine Activities", () => {
+  xdescribe("Routine Activities", () => {
     const routineActivityData = {
       routineId: 4,
       activityId: 8,

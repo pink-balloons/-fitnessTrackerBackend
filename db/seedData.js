@@ -1,7 +1,25 @@
 // require in the database adapter functions as you write them (createUser, createActivity...)
 const client = require("./client");
 
-const { createUser, createRoutine } = require("./");
+const {
+  createUser,
+  createRoutine,
+  attachActivitiesToRoutines,
+  getActivityById,
+  getAllActivities,
+  createActivity,
+  updateActivity,
+  getRoutineById,
+  getRoutinesWithoutActivities,
+  getAllRoutines,
+  getAllPublicRoutines,
+  getAllRoutinesByUser,
+  getPublicRoutinesByUser,
+  getPublicRoutinesByActivity,
+  updateRoutine,
+  destroyRoutine,
+  getRoutineActivitiesByRoutine,
+} = require("./");
 
 async function dropTables() {
   console.log("Dropping All Tables...");
@@ -49,7 +67,7 @@ async function createTables() {
       name VARCHAR(255) UNIQUE NOT NULL,
       goal TEXT NOT NULL
     )
-    `)
+    `);
 
     await client.query(`
       CREATE TABLE routine_activities (
@@ -159,6 +177,7 @@ async function createInitialRoutines() {
         goal: "Running, stairs. Stuff that gets your heart pumping!",
       },
     ];
+
     const routines = await Promise.all(
       routinesToCreate.map((routine) => createRoutine(routine))
     );
@@ -249,8 +268,8 @@ async function rebuildDB() {
     await dropTables();
     await createTables();
     await createInitialUsers();
-    // await createInitialActivities();
-    // await createInitialRoutines();
+    await createInitialActivities();
+    await createInitialRoutines();
     // await createInitialRoutineActivities();
   } catch (error) {
     console.log("Error during rebuildDB");
