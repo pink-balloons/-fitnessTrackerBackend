@@ -2,24 +2,27 @@
 const client = require("./client");
 
 const {
-  createUser,
-  createRoutine,
-  attachActivitiesToRoutines,
-  getActivityById,
+  getUserById,
   getAllActivities,
+  getActivityById,
   createActivity,
   updateActivity,
   getRoutineById,
-  getRoutinesWithoutActivities,
   getAllRoutines,
   getAllPublicRoutines,
   getAllRoutinesByUser,
   getPublicRoutinesByUser,
   getPublicRoutinesByActivity,
+  createRoutine,
   updateRoutine,
   destroyRoutine,
+  createUser,
+  getUser,
   getRoutineActivitiesByRoutine,
-} = require("./");
+  addActivityToRoutine,
+  updateRoutineActivity,
+  destroyRoutineActivity,
+} = require("../db");
 
 async function dropTables() {
   console.log("Dropping All Tables...");

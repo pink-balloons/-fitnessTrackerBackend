@@ -3,8 +3,8 @@
 // export the api router
 
 const express = require("express");
-// const { JWT_SECRET } = process.env;
-// const jwt = require("jsonwebtoken");
+const { JWT_SECRET } = process.env;
+const jwt = require("jsonwebtoken");
 const apiRouter = express.Router();
 
 apiRouter.use(async (req, res, next) => {
@@ -40,8 +40,8 @@ apiRouter.use("/users", usersRouter);
 const healthRouter = require("./health");
 apiRouter.use("/health", healthRouter);
 
-const tagsRouter = require("./tags");
-apiRouter.use("/tags", tagsRouter);
+const activityRouter = require("./activities");
+apiRouter.use("/activities", activityRouter);
 
 apiRouter.use((error, req, res, next) => {
   res.send(error);
