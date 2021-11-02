@@ -52,12 +52,10 @@ async function getActivityById(id) {
 
 async function getAllActivities() {
   try {
-    const {
-      rows: [activities],
-    } = await client.query(`
+    const { rows } = await client.query(`
      SELECT * FROM activities
    `);
-    return activities;
+    return rows;
   } catch (error) {
     throw error;
   }
@@ -79,7 +77,6 @@ async function createActivity({ name, description }) {
     throw error;
   }
 }
-
 
 async function updateActivity({ id, ...fields }) {
   try {
@@ -117,7 +114,4 @@ module.exports = {
   getAllActivities,
   createActivity,
   updateActivity,
-
-
-
 };
