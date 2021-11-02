@@ -70,7 +70,7 @@ async function createTables() {
       name VARCHAR(255) UNIQUE NOT NULL,
       goal TEXT NOT NULL
     )
-    `)
+    `);
 
     await client.query(`
       CREATE TABLE routine_activities (
@@ -180,6 +180,7 @@ async function createInitialRoutines() {
         goal: "Running, stairs. Stuff that gets your heart pumping!",
       },
     ];
+
     const routines = await Promise.all(
       routinesToCreate.map((routine) => createRoutine(routine))
     );
@@ -270,8 +271,8 @@ async function rebuildDB() {
     await dropTables();
     await createTables();
     await createInitialUsers();
-    // await createInitialActivities();
-    // await createInitialRoutines();
+    await createInitialActivities();
+    await createInitialRoutines();
     // await createInitialRoutineActivities();
   } catch (error) {
     console.log("Error during rebuildDB");

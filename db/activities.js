@@ -35,7 +35,9 @@ async function attachActivitiesToRoutines(routines) {
 
 async function getActivityById(id) {
   try {
-    const { rows: activity } = await client.query(
+    const {
+      rows: [activity],
+    } = await client.query(
       `
      SELECT * 
      FROM activities
@@ -63,16 +65,18 @@ async function getAllActivities() {
 
 async function createActivity({ name, description }) {
   try {
-    const { rows: activities } = client.query(
+    const {
+      rows: [activity],
+    } = await client.query(
       `
   INSERT INTO activities(name, description)
-  VALUES($1, $2) 
+  VALUES($1, $2)
   ON CONFLICT (name) DO NOTHING
   RETURNING *;
         `,
       [name, description]
     );
-    return activities;
+    return activity;
   } catch (error) {
     throw error;
   }
@@ -89,10 +93,11 @@ async function updateActivity({ id, ...fields }) {
     }
 
     const fieldsToUpdate = dbFields(toUpDate);
-    console.log(fieldsToUpdate, "AHHHHH!!!!");
     // make if else statement field has greader than update then 0 the update set
 
-    const { rows: activity } = client.query(
+    const {
+      rows: [activity],
+    } = await client.query(
       `
           UPDATE activities
          SET ${fieldsToUpdate.insert} 
