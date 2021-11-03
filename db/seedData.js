@@ -69,7 +69,7 @@ async function createTables() {
       "isPublic" BOOLEAN DEFAULT 'false',
       name VARCHAR(255) UNIQUE NOT NULL,
       goal TEXT NOT NULL
-    )
+    );
     `);
 
     await client.query(`

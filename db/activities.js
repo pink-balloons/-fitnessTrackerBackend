@@ -95,19 +95,23 @@ async function updateActivity({ id, ...fields }) {
     const fieldsToUpdate = dbFields(toUpDate);
     // make if else statement field has greader than update then 0 the update set
 
-    const {
-      rows: [activity],
-    } = await client.query(
-      `
+    if (fieldsToUpdate) {
+      const {
+        rows: [activity],
+      } = await client.query(
+        `
           UPDATE activities
          SET ${fieldsToUpdate.insert} 
          WHERE id = ${id}
          returning *;
          
         `,
-      fieldsToUpdate.vals
-    );
-    return activity;
+        fieldsToUpdate.vals
+      );
+      return activity;
+    } else {
+      return null;
+    }
   } catch (error) {
     throw error;
   }
