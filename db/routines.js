@@ -1,6 +1,7 @@
 const client = require("./client");
 const { dbFields } = require("./utils");
-const { attachActivitiesToRoutines } = require("./");
+const { attachActivitiesToRoutines } = require("./activities");
+const { getUserByUsername } = require("./users");
 
 async function getRoutineById(id) {
   try {
@@ -33,6 +34,8 @@ async function getRoutinesWithoutActivities() {
       SELECT * from routines;
       `
     );
+
+    console.log(rows, "GET ROUTINES WITHOUT ACTIVITIES");
     return rows;
   } catch (error) {
     console.error("Problem getting routines without activities");
@@ -42,25 +45,26 @@ async function getRoutinesWithoutActivities() {
 
 async function getAllRoutines() {
   try {
-    const { rows } = await client.query(`
-    SELECT routines.* AS count, users.username AS "creatorName" FROM routines 
-    JOIN users ON routines 
-    WHERE routines."creatorId" = users.id;
+    const { rows: routines } = await client.query(`
+    SELECT routines.*, users.username AS "creatorName" FROM routines 
+    JOIN users ON routines."creatorId"=users.id
     `);
-    return attachActivitiesToRoutines(rows);
+    // console.log(await attachActivitiesToRoutines(routines), "ATTACH LOG")
+    return attachActivitiesToRoutines(routines);
   } catch (error) {
-    console.error("problem with getting all routines");
+    // console.error("problem with getting all routines");
     throw error;
   }
 }
 
 async function getAllPublicRoutines() {
   try {
-    const { rows } = await client.query(`
-    SELECT * FROM routines
+    const { rows: routines } = await client.query(`
+    SELECT routines.*, users.username AS "creatorName" FROM routines 
+    JOIN users ON routines."creatorId"=users.id
     WHERE "isPublic"='true'
     `);
-    return rows;
+    return attachActivitiesToRoutines(routines);
   } catch (error) {
     console.error("Problem getting all Public routines");
     throw error;
@@ -69,35 +73,42 @@ async function getAllPublicRoutines() {
 
 async function getAllRoutinesByUser({ username }) {
   try {
-    const { rows } = await client.query(
+    const user = await getUserByUsername(username);
+    const { rows: routines } = await client.query(
       `
-      SELECT * FROM routines
-      WHERE "creatorName" = $1
+      SELECT routines.*, users.username AS "creatorName" FROM routines 
+      JOIN users ON routines."creatorId"=users.id
+      WHERE "creatorId"=$1
     `,
-      [username]
+      [user.id]
     );
+
+    console.log(routines, "Get All Log");
     // if (!rows) {
     //   return null;
     // }
-    return rows;
+    return attachActivitiesToRoutines(routines);
   } catch (error) {
-    console.error("Problem with getting routine by username");
+    // console.error("Problem with getting routine by username");
     throw error;
   }
 }
 
 async function getPublicRoutinesByUser({ username }) {
   try {
-    const { rows } = await client.query(`
-    SELECT * FROM routines
-    WHERE "creatorName" = ${username} AND "isPublic" = 'true';
-  `);
-    if (!rows) {
-      return null;
-    }
-    return rows;
+    const user = await getUserByUsername(username);
+    const { rows: routines } = await client.query(
+      `
+      SELECT routines.*, users.username AS "creatorName" FROM routines 
+      JOIN users ON routines."creatorId"=users.id
+      WHERE "creatorId"=$1
+      AND "isPublic"='true'
+    `,
+      [user.id]
+    );
+    return attachActivitiesToRoutines(routines);
   } catch (error) {
-    console.error("Problem with getting public routines by user");
+    // console.error("Problem with getting public routines by user");
     throw error;
   }
 }
@@ -121,7 +132,7 @@ async function getPublicRoutinesByActivity({ id }) {
       `);
     return rows;
   } catch (error) {
-    console.error("Problem getting public routine by activity");
+    // console.error("Problem getting public routine by activity");
     throw error;
   }
 }

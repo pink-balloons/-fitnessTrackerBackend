@@ -13,6 +13,7 @@ const {
   getAllRoutinesByUser,
   getPublicRoutinesByUser,
   getPublicRoutinesByActivity,
+  getRoutinesWithoutActivities,
   createRoutine,
   updateRoutine,
   destroyRoutine,
@@ -78,8 +79,8 @@ async function createTables() {
       "routineId" INTEGER REFERENCES routines(id),
       "activityId" INTEGER REFERENCES activities(id), 
       duration INTEGER, 
-      count INTEGER
-
+      count INTEGER,
+      UNIQUE("routineId", "activityId")
       );
     `);
 
@@ -273,7 +274,7 @@ async function rebuildDB() {
     await createInitialUsers();
     await createInitialActivities();
     await createInitialRoutines();
-    // await createInitialRoutineActivities();
+    await createInitialRoutineActivities();
   } catch (error) {
     console.log("Error during rebuildDB");
     throw error;
