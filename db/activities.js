@@ -84,34 +84,19 @@ async function createActivity({ name, description }) {
 
 async function updateActivity({ id, ...fields }) {
   try {
-    const toUpDate = {};
-
-    for (const key in fields) {
-      if (fields[key] !== undefined) {
-        toUpDate[key] = fields[key];
-      }
-    }
-
-    const fieldsToUpdate = dbFields(toUpDate);
-    // make if else statement field has greader than update then 0 the update set
-
-    if (fieldsToUpdate) {
-      const {
-        rows: [activity],
-      } = await client.query(
-        `
-          UPDATE activities
-         SET ${fieldsToUpdate.insert} 
-         WHERE id = ${id}
-         returning *;
-         
-        `,
-        fieldsToUpdate.vals
-      );
-      return activity;
-    } else {
-      return null;
-    }
+    const result = dbFields(fields);
+    const {
+      rows: [activity],
+    } = await client.query(
+      `
+    UPDATE activities
+    SET ${result.insert}
+    WHERE id=${id}
+    RETURNING *;
+    `,
+      result.vals
+    );
+    return activity;
   } catch (error) {
     throw error;
   }

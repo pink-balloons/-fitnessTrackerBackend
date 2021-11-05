@@ -2,6 +2,7 @@ const client = require("./client");
 const { dbFields } = require("./utils");
 const { attachActivitiesToRoutines } = require("./activities");
 const { getUserByUsername } = require("./users");
+const { getRoutineActivitiesByRoutine } = require("./routines_activities");
 
 async function getRoutineById(id) {
   try {
@@ -22,7 +23,6 @@ async function getRoutineById(id) {
 
     return routine;
   } catch (error) {
-    console.error("Problem in getRoutineById");
     throw error;
   }
 }
@@ -34,11 +34,8 @@ async function getRoutinesWithoutActivities() {
       SELECT * from routines;
       `
     );
-
-    console.log(rows, "GET ROUTINES WITHOUT ACTIVITIES");
     return rows;
   } catch (error) {
-    console.error("Problem getting routines without activities");
     throw error;
   }
 }
@@ -49,10 +46,8 @@ async function getAllRoutines() {
     SELECT routines.*, users.username AS "creatorName" FROM routines 
     JOIN users ON routines."creatorId"=users.id
     `);
-    // console.log(await attachActivitiesToRoutines(routines), "ATTACH LOG")
     return attachActivitiesToRoutines(routines);
   } catch (error) {
-    // console.error("problem with getting all routines");
     throw error;
   }
 }
@@ -83,13 +78,8 @@ async function getAllRoutinesByUser({ username }) {
       [user.id]
     );
 
-    console.log(routines, "Get All Log");
-    // if (!rows) {
-    //   return null;
-    // }
     return attachActivitiesToRoutines(routines);
   } catch (error) {
-    // console.error("Problem with getting routine by username");
     throw error;
   }
 }
@@ -108,31 +98,21 @@ async function getPublicRoutinesByUser({ username }) {
     );
     return attachActivitiesToRoutines(routines);
   } catch (error) {
-    // console.error("Problem with getting public routines by user");
     throw error;
   }
 }
 
 async function getPublicRoutinesByActivity({ id }) {
   try {
-    const { rows: activity } = await client.query(
+    const { rows: routines } = await client.query(
       `
-    SELECT * FROM activities 
-    WHERE id = ${id}
-    RETURNING *; 
+      SELECT routines.*, users.username AS "creatorName" FROM routines 
+      JOIN users ON routines."creatorId"=users.id
+      WHERE "isPublic"='true'
     `
     );
-    activityName = activity.name;
-
-    const { rows } = await client.query(`
-      
-      SELECT * FROM routines
-      WHERE name = ${activityName} AND "isPublic" = 'true'
-      RETURNING *;
-      `);
-    return rows;
+    return attachActivitiesToRoutines(routines);
   } catch (error) {
-    // console.error("Problem getting public routine by activity");
     throw error;
   }
 }
@@ -158,51 +138,37 @@ async function createRoutine({ creatorId, isPublic, name, goal }) {
 
 async function updateRoutine({ id, ...fields }) {
   try {
-    const toUpDate = {};
-
-    for (const key in fields) {
-      if (fields[key] !== undefined) {
-        toUpDate[key] = fields[key];
-      }
-    }
-
-    const fieldsToUpdate = dbFields(toUpDate);
-
-    if (fieldsToUpdate) {
-      const { rows: routine } = await client.query(
-        `
-          UPDATE routines
-           SET ${fieldsToUpdate.insert} 
-           WHERE id = ${id}
-           returning *;
-          `,
-        fieldsToUpdate.vals
-      );
-      return routine;
-    } else {
-      return null;
-    }
+    const result = dbFields(fields);
+    const {
+      rows: [routine],
+    } = await client.query(
+      `
+    UPDATE routines
+    SET ${result.insert}
+    WHERE id=${id}
+    RETURNING *;
+    `,
+      result.vals
+    );
+    return routine;
   } catch (error) {
-    console.error("Problem with updating routine");
     throw error;
   }
 }
 
 async function destroyRoutine(id) {
   try {
-    const { rows: routine } = await client.query(
+    await client.query(
       `
-    DELETE * from routines 
-    where id = ${id};
+    DELETE FROM routines 
+    where id = ${id}
+    RETURNING *;
     `
     );
   } catch (error) {
-    console.error("Problem deleting routine");
     throw error;
   }
 }
-
-async function getRoutineActivitiesByRoutine() {}
 
 module.exports = {
   getRoutineById,
@@ -215,5 +181,4 @@ module.exports = {
   createRoutine,
   updateRoutine,
   destroyRoutine,
-  getRoutineActivitiesByRoutine,
 };
