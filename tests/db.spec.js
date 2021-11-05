@@ -384,7 +384,7 @@ describe("Database", () => {
         );
         expect(routine).toBeFalsy();
       });
-      xit("Deletes all the routine_activities whose routine is the one being deleted.", async () => {
+      it("Deletes all the routine_activities whose routine is the one being deleted.", async () => {
         const queriedRoutineActivities = await getRoutineActivitiesByRoutine(
           routineToCreateAndUpdate
         );
