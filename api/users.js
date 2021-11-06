@@ -3,7 +3,7 @@ const { getAllRoutinesByUser } = require("../db");
 const { createUser, getUserByUsername } = require("../db/users");
 const usersRouter = express.Router();
 
-usersRouter.post("/register", (req, res, next) => {
+usersRouter.post("/register", async (req, res, next) => {
   const { username, password } = req.body;
   try {
     const _user = await getUserByUsername(username);
@@ -24,7 +24,7 @@ usersRouter.post("/register", (req, res, next) => {
   }
 });
 
-usersRouter.post("/login", (req, res, next) => {
+usersRouter.post("/login", async (req, res, next) => {
   const { username, password } = req.body;
   try {
     if (!username || !password) {
@@ -39,24 +39,23 @@ usersRouter.post("/login", (req, res, next) => {
   }
 });
 
-usersRouter.get("/me", (req, res, next) => {
-    try {
-        
-    } catch (error) {
-        throw error
-    }
-})
+usersRouter.get("/me", async (req, res, next) => {
+  try {
+  } catch (error) {
+    throw error;
+  }
+});
 
-usersRouter.get("/:username/routines", (req, res, next) => {
-    const {username} = req.params
-    
-    try {
-        const routines = await getAllRoutinesByUser(username)
+usersRouter.get("/:username/routines", async (req, res, next) => {
+  const { username } = req.params;
 
-        res.send(routines)
-    } catch (error) {
-        throw error
-    }
-})
+  try {
+    const routines = await getAllRoutinesByUser(username);
 
-module.exports = usersRouter
+    res.send(routines);
+  } catch (error) {
+    throw error;
+  }
+});
+
+module.exports = usersRouter;

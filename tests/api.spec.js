@@ -24,7 +24,7 @@ const {
 } = require("../db");
 const client = require("../db/client");
 
-xdescribe("API", () => {
+describe("API", () => {
   let token, registeredUser;
   let routineActivityToCreateAndUpdate = {
     routineId: 4,
@@ -44,7 +44,7 @@ xdescribe("API", () => {
     expect(typeof res.data.message).toEqual("string");
   });
 
-  describe("Users", () => {
+  xdescribe("Users", () => {
     let newUser = { username: "robert", password: "bobbylong321" };
     let newUserShortPassword = { username: "robertShort", password: "bobby21" };
     describe("POST /users/register", () => {
@@ -152,7 +152,7 @@ xdescribe("API", () => {
       });
     });
   });
-  describe("Activities", () => {
+  xdescribe("Activities", () => {
     let activityToCreateAndUpdate = {
       name: "Bicep Curls",
       description: "They hurt, but you will thank you later",
@@ -218,7 +218,7 @@ xdescribe("API", () => {
       });
     });
   });
-  describe("Routines", () => {
+  xdescribe("Routines", () => {
     let routineToCreateAndUpdate = {
       isPublic: true,
       name: "Elliptical Day",
@@ -332,7 +332,7 @@ xdescribe("API", () => {
       });
     });
   });
-  describe("routine_activities", () => {
+  xdescribe("routine_activities", () => {
     let newRoutineActivityData = {
       routineId: 3,
       activityId: 8,

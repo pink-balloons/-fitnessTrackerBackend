@@ -1,7 +1,7 @@
 const express = require("express");
 const activityRouter = express.Router();
 
-activityRouter.get("/", (req, res, next) => {
+activityRouter.get("/", async (req, res, next) => {
   try {
     const activities = await getAllActivities();
 
@@ -11,12 +11,9 @@ activityRouter.get("/", (req, res, next) => {
   }
 });
 
-activityRouter.post("/", (req, res, next) => {
-    try {
-        
-    } catch (error) {
-        
-    }
-})
+activityRouter.post("/", async (req, res, next) => {
+  try {
+  } catch (error) {}
+});
 
 module.exports = activityRouter;
