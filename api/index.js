@@ -42,4 +42,11 @@ apiRouter.use("/users", usersRouter);
 const activityRouter = require("./activities");
 apiRouter.use("/activities", activityRouter);
 
+const routineRouter = require("./routines")
+apiRouter.use("/routines", routineRouter)
+
+const routineActivitiesRouter = require("./routine_activities")
+apiRouter.use("/routine_activities", routineActivitiesRouter)
+
+
 module.exports = apiRouter;
