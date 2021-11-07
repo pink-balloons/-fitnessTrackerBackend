@@ -1,60 +1,29 @@
 // create an api router
 // attach other routers from files in this api directory (users, activities...)
 // export the api router
-
 const express = require("express");
-const { JWT_SECRET } = process.env;
-const jwt = require("jsonwebtoken");
 const apiRouter = express.Router();
-
-// const healthRouter = require("./health");
-apiRouter.get("/health", async (req, res) => {
+const client = require("../db/client");
+const jwt = require("jsonwebtoken");
+const { JWT_SECRET = "neverTell" } = process.env;
+// apiRouter.use((req, res, next) => {
+//     if (req.user) {
+//       console.log("User is set:", req.user);
+//     }
+//     next();
+//   });
+apiRouter.get("/health", async (req, res, next) => {
   try {
-    const allClear = "healthy";
-
-    res.send({ message: allClear });
-  } catch (error) {
-    throw error;
-  }
-});
-
-apiRouter.use(async (req, res, next) => {
-  const prefix = "Bearer ";
-  const auth = req.header("Authorization");
-
-  if (!auth) {
-    next();
-  } else if (auth.startsWith(prefix)) {
-    const token = auth.slice(prefix.length);
-
-    try {
-      const { id } = jwt.verify(token, JWT_SECRET);
-      if (id) {
-        req.user = await getUsersById(id);
-        next();
-      }
-    } catch ({ name, message }) {
-      next({ name, message });
-    }
-  } else {
-    next({
-      name: "AuthorizationHeaderError",
-      message: `Authorization token must start with ${prefix}`,
+    res.send({
+      message: "Healthy",
     });
+  } catch (error) {
+    next(error);
   }
 });
-
 const usersRouter = require("./users");
 apiRouter.use("/users", usersRouter);
-
-const activityRouter = require("./activities");
-apiRouter.use("/activities", activityRouter);
-
-const routineRouter = require("./routines")
-apiRouter.use("/routines", routineRouter)
-
-const routineActivitiesRouter = require("./routine_activities")
-apiRouter.use("/routine_activities", routineActivitiesRouter)
-
-
+apiRouter.use((error, req, res, next) => {
+  res.send(error);
+});
 module.exports = apiRouter;

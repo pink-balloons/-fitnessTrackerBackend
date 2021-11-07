@@ -1,37 +1,55 @@
 const express = require("express");
 const usersRouter = express.Router();
 const jwt = require("jsonwebtoken");
-const JWT_SECRET = process.env;
-const { getAllRoutinesByUser } = require("../db");
-const { createUser, getUserByUsername, getUser } = require("../db/users");
-
-// usersRouter.use((req, res, next) => {
-//   console.log("A requests is being made to /users");
-
-//   next();
+const { createUser, getUser, getUserByUsername } = require("../db/users");
+const { JWT_SECRET = "neverTell" } = process.env;
+const { requireUser } = require("./utils");
+// usersRouter.get("/", async (req, res, next) => {
+//   const users = await getAllUsers();
+//   res.send({
+//     users,
+//   });
 // });
+usersRouter.post("/login", async (req, res, next) => {
+  const { username, password } = req.body;
+  console.log("Hello");
+  // request must have both
+  if (!username || !password) {
+    next({
+      name: "MissingCredentialsError",
+      message: "Please supply both a username and password",
+    });
+  }
+  try {
+    const user = await getUser({ username, password });
 
-// usersRouter.post("/login", async (req, res, next) => {
-//   const { username, password } = req.body;
-//   try {
-//     if (!username || !password) {
-//       return;
-//     }
-
-//     const user = await getUser(username, password);
-
-//     res.send(user);
-//   } catch (error) {
-//     next(error);
-//   }
-// });
-
+    if (!user) {
+      next({
+        name: "IncorrectCredentialsError",
+        message: "Username or password is incorrect",
+      });
+    } else {
+      const token = jwt.sign(
+        { id: user.id, username: user.username },
+        JWT_SECRET,
+        {
+          expiresIn: "1h",
+        }
+      );
+      res.send({ user, token, message: "you are logged in!" });
+    }
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+});
 usersRouter.post("/register", async (req, res, next) => {
   try {
     const { username, password } = req.body;
-    const _user = await getUserByUsername(username);
 
-    if (_user) {
+    const queriedUser = await getUserByUsername(username);
+
+    if (queriedUser) {
       res.status(401);
       next({
         name: "UserExistsError",
@@ -39,15 +57,19 @@ usersRouter.post("/register", async (req, res, next) => {
       });
     } else if (password.length < 8) {
       res.status(401);
-
-      next({ name: "PasswordLengthError", message: "Password Too Short!" });
+      next({
+        name: "PasswordLengthError",
+        message: "Password Too Short!",
+      });
     } else {
-      const user = await createUser({ username, password });
-
+      const user = await createUser({
+        username,
+        password,
+      });
       if (!user) {
         next({
           name: "UserCreationError",
-          message: "There was a problem registering you. Please try again!",
+          message: "There was a problem registering you. Please try again.",
         });
       } else {
         const token = jwt.sign(
@@ -60,31 +82,19 @@ usersRouter.post("/register", async (req, res, next) => {
             expiresIn: "1w",
           }
         );
-        res.send({ user, message: "you're signed up!", token });
+        res.send({
+          user,
+          message: "you're signed up!",
+          token,
+        });
       }
     }
   } catch (error) {
     next(error);
   }
 });
-
 usersRouter.get("/me", async (req, res, next) => {
   try {
-  } catch (error) {
-    next(error);
-  }
+  } catch (error) {}
 });
-
-usersRouter.get("/:username/routines", async (req, res, next) => {
-  const { username } = req.params;
-
-  try {
-    const routines = await getAllRoutinesByUser(username);
-
-    res.send(routines);
-  } catch (error) {
-    next(error);
-  }
-});
-
 module.exports = usersRouter;

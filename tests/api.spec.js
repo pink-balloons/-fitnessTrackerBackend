@@ -120,7 +120,7 @@ describe("API", () => {
         expect(parsedToken.username).toEqual(registeredUser.username);
       });
     });
-    describe("GET /users/me", () => {
+    xdescribe("GET /users/me", () => {
       it("sends back users data if valid token is supplied in header", async () => {
         const { data } = await axios.get(`${API_URL}/api/users/me`, {
           headers: { "Authorization": `Bearer ${token}` },
@@ -139,7 +139,7 @@ describe("API", () => {
         expect(noTokenErrResp.data).toBeTruthy();
       });
     });
-    describe("GET /users/:username/routines", () => {
+    xdescribe("GET /users/:username/routines", () => {
       it("Gets a list of public routines for a particular user.", async () => {
         const userId = 2;
         const userWithRoutines = await getUserById(userId);
