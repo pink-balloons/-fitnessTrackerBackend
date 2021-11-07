@@ -42,12 +42,6 @@ async function getUser({ username, password }) {
     if (user.password !== password) {
       return;
     }
-    // else {
-    //   throw Error("Invalid username or password");
-    // }
-
-    delete user.password;
-
     delete user.password;
 
     return user;

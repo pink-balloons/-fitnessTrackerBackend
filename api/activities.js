@@ -1,27 +1,61 @@
 const express = require("express");
-const {createActivity, getAllActivities} = require("../db")
+const {
+  createActivity,
+  getAllActivities,
+  updateActivity,
+} = require("../db/activities");
+const { requireUser } = require("../db/utils");
 const activityRouter = express.Router();
 
 activityRouter.get("/", async (req, res, next) => {
   try {
     const activities = await getAllActivities();
-
-    res.send(activities);
-  } catch (error) {
-    throw error;
+    if (activities) {
+      res.send(activities);
+    } else {
+      res.send({ message: "No activities found" });
+    }
+  } catch ({ name, message }) {
+    next({ name, message });
   }
 });
 
-activityRouter.post("/", async (req, res, next) => {
-  const {name, description} = req.body
+activityRouter.post("/", requireUser, async (req, res, next) => {
+  console.log("1");
   try {
+    const { name, description } = req.body;
+    console.log("2");
 
+    if (name && description) {
+      const createdActivity = await createActivity({ name, description });
+      res.send(createdActivity);
+    } else {
+      res.send({ message: "Missing fields" });
+    }
+  } catch ({ name, message }) {
+    next({ name, message });
+  }
+});
 
-    const newActivity = await createActivity(name, description)
+activityRouter.patch("/:activityId", async (req, res, next) => {
+  console.log("body!!!!!!!!!");
 
-    res.send(newActivity)
-  } catch (error) {
-    next(error)
+  const { name, description } = req.body;
+  const { activityId } = req.params;
+
+  try {
+    if ((activityId, name, description)) {
+      const updatedActivity = await updateActivity({
+        id: activityId,
+        name,
+        description,
+      });
+      res.send(updatedActivity);
+    } else {
+      res.send({ message: "Missing fields" });
+    }
+  } catch ({ name, message }) {
+    next({ name, message });
   }
 });
 

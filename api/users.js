@@ -2,17 +2,27 @@ const express = require("express");
 const usersRouter = express.Router();
 const jwt = require("jsonwebtoken");
 const { createUser, getUser, getUserByUsername } = require("../db/users");
-const { JWT_SECRET = "neverTell" } = process.env;
+const { JWT_SECRET } = process.env;
 const { requireUser } = require("./utils");
-// usersRouter.get("/", async (req, res, next) => {
-//   const users = await getAllUsers();
-//   res.send({
-//     users,
-//   });
-// });
+const bcrypt = require("bcrypt");
+
+usersRouter.get("/me", (req, res, next) => {
+  const user = req.user;
+
+  try {
+    if (!user) {
+      const error = new Error("User not found");
+      return res.status(404).send(error.message);
+    } else {
+      res.send(user);
+    }
+  } catch ({ name, message }) {
+    next({ name, message });
+  }
+});
+
 usersRouter.post("/login", async (req, res, next) => {
   const { username, password } = req.body;
-  console.log("Hello");
   // request must have both
   if (!username || !password) {
     next({
@@ -93,8 +103,5 @@ usersRouter.post("/register", async (req, res, next) => {
     next(error);
   }
 });
-usersRouter.get("/me", async (req, res, next) => {
-  try {
-  } catch (error) {}
-});
+
 module.exports = usersRouter;
