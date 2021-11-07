@@ -5,26 +5,26 @@ const JWT_SECRET = process.env;
 const { getAllRoutinesByUser } = require("../db");
 const { createUser, getUserByUsername, getUser } = require("../db/users");
 
-usersRouter.use((req, res, next) => {
-  console.log("A requests is being made to /users");
+// usersRouter.use((req, res, next) => {
+//   console.log("A requests is being made to /users");
 
-  next();
-});
+//   next();
+// });
 
-usersRouter.post("/login", async (req, res, next) => {
-  const { username, password } = req.body;
-  try {
-    if (!username || !password) {
-      return;
-    }
+// usersRouter.post("/login", async (req, res, next) => {
+//   const { username, password } = req.body;
+//   try {
+//     if (!username || !password) {
+//       return;
+//     }
 
-    const user = await getUser(username, password);
+//     const user = await getUser(username, password);
 
-    res.send(user);
-  } catch (error) {
-    next(error);
-  }
-});
+//     res.send(user);
+//   } catch (error) {
+//     next(error);
+//   }
+// });
 
 usersRouter.post("/register", async (req, res, next) => {
   try {
@@ -42,26 +42,26 @@ usersRouter.post("/register", async (req, res, next) => {
 
       next({ name: "PasswordLengthError", message: "Password Too Short!" });
     } else {
-      const newUser = await createUser({ username, password });
-    }
+      const user = await createUser({ username, password });
 
-    if (!newUser) {
-      next({
-        name: "UserCreationError",
-        message: "There was a problem registering you. Please try again!",
-      });
-    } else {
-      const token = jwt.sign(
-        {
-          id: user.id,
-          username: user.username,
-        },
-        JWT_SECRET,
-        {
-          expiresIn: "1w",
-        }
-      );
-      res.send({ user, message: "you're signed up!", token });
+      if (!user) {
+        next({
+          name: "UserCreationError",
+          message: "There was a problem registering you. Please try again!",
+        });
+      } else {
+        const token = jwt.sign(
+          {
+            id: user.id,
+            username: user.username,
+          },
+          JWT_SECRET,
+          {
+            expiresIn: "1w",
+          }
+        );
+        res.send({ user, message: "you're signed up!", token });
+      }
     }
   } catch (error) {
     next(error);

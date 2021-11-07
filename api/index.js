@@ -7,8 +7,16 @@ const { JWT_SECRET } = process.env;
 const jwt = require("jsonwebtoken");
 const apiRouter = express.Router();
 
-const healthRouter = require("./health");
-apiRouter.use("/health", healthRouter);
+// const healthRouter = require("./health");
+apiRouter.get("/health", async (req, res) => {
+  try {
+    const allClear = "healthy";
+
+    res.send({ message: allClear });
+  } catch (error) {
+    throw error;
+  }
+});
 
 apiRouter.use(async (req, res, next) => {
   const prefix = "Bearer ";
