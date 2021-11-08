@@ -28,7 +28,8 @@ server.use("*", (req, res, next) => {
 });
 
 server.use((error, req, res, next) => {
-  res.status(500).send({ error: error.message });
+  res.status(500)
+  res.send({ error: error.message });
 });
 
 const client = require("./db/client");

@@ -4,7 +4,7 @@ const {
   getAllActivities,
   updateActivity,
 } = require("../db/activities");
-const { requireUser } = require("../db/utils");
+const { requireUser } = require("./utils");
 const activityRouter = express.Router();
 
 activityRouter.get("/", async (req, res, next) => {

@@ -2,22 +2,23 @@ const express = require("express");
 const usersRouter = express.Router();
 const jwt = require("jsonwebtoken");
 const { createUser, getUser, getUserByUsername } = require("../db/users");
-const { JWT_SECRET } = process.env;
+const { JWT_SECRET  = "neverTell"} = process.env;
 const { requireUser } = require("./utils");
 const bcrypt = require("bcrypt");
 
-usersRouter.get("/me", (req, res, next) => {
+usersRouter.get("/me", requireUser, async (req, res, next) => {
   const user = req.user;
-
+console.log(req.user, "!!!!!!!!!!")
   try {
-    if (!user) {
-      const error = new Error("User not found");
-      return res.status(404).send(error.message);
-    } else {
-      res.send(user);
-    }
-  } catch ({ name, message }) {
-    next({ name, message });
+    res.send(req.user)
+    // if (!user) {
+    //   const error = new Error("User not found");
+    //   return res.status(404).send(error.message);
+    // } else {
+    //   res.send(user);
+    // }
+  } catch (error) {
+    next(error);
   }
 });
 
