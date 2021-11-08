@@ -71,7 +71,7 @@ describe("API", () => {
       it("Requires username and password. Requires all passwords to be at least 8 characters long.", () => {
         expect(newUser.password.length).toBeGreaterThan(7);
       });
-      xit("EXTRA CREDIT: Hashes password before saving user to DB.", async () => {
+      it("EXTRA CREDIT: Hashes password before saving user to DB.", async () => {
         const {
           rows: [queriedUser],
         } = await client.query(
@@ -123,7 +123,7 @@ describe("API", () => {
     describe("GET /users/me", () => {
       it("sends back users data if valid token is supplied in header", async () => {
         const { data } = await axios.get(`${API_URL}/api/users/me`, {
-          headers: { "Authorization": `Bearer ${token}` },
+          headers: { Authorization: `Bearer ${token}` },
         });
         expect(data.username).toBeTruthy();
         expect(data.username).toBe(registeredUser.username);
@@ -180,7 +180,7 @@ describe("API", () => {
         const { data: respondedActivity } = await axios.post(
           `${API_URL}/api/activities`,
           activityToCreateAndUpdate,
-          { headers: { "Authorization": `Bearer ${token}` } }
+          { headers: { Authorization: `Bearer ${token}` } }
         );
         expect(respondedActivity.name).toEqual(activityToCreateAndUpdate.name);
         expect(respondedActivity.description).toEqual(
@@ -198,7 +198,7 @@ describe("API", () => {
         const { data: respondedActivity } = await axios.patch(
           `${API_URL}/api/activities/${activityToCreateAndUpdate.id}`,
           newActivityData,
-          { headers: { "Authorization": `Bearer ${token}` } }
+          { headers: { Authorization: `Bearer ${token}` } }
         );
         expect(respondedActivity.name).toEqual(newActivityData.name);
         expect(respondedActivity.description).toEqual(
@@ -249,7 +249,7 @@ describe("API", () => {
         const { data: respondedRoutine } = await axios.post(
           `${API_URL}/api/routines`,
           routineToCreateAndUpdate,
-          { headers: { "Authorization": `Bearer ${token}` } }
+          { headers: { Authorization: `Bearer ${token}` } }
         );
 
         expect(respondedRoutine.name).toEqual(routineToCreateAndUpdate.name);
@@ -277,7 +277,7 @@ describe("API", () => {
         const { data: respondedRoutine } = await axios.patch(
           `${API_URL}/api/routines/${routineToCreateAndUpdate.id}`,
           newRoutineData,
-          { headers: { "Authorization": `Bearer ${token}` } }
+          { headers: { Authorization: `Bearer ${token}` } }
         );
         expect(respondedRoutine.name).toEqual(newRoutineData.name);
         expect(respondedRoutine.goal).toEqual(newRoutineData.goal);
@@ -288,7 +288,7 @@ describe("API", () => {
       it("Hard deletes a routine. Makes sure to delete all the routineActivities whose routine is the one being deleted.", async () => {
         const { data: deletedRoutine } = await axios.delete(
           `${API_URL}/api/routines/${routineToCreateAndUpdate.id}`,
-          { headers: { "Authorization": `Bearer ${token}` } }
+          { headers: { Authorization: `Bearer ${token}` } }
         );
         const shouldBeDeleted = await getRoutineById(deletedRoutine.id);
         expect(deletedRoutine.id).toBe(routineToCreateAndUpdate.id);
@@ -308,7 +308,7 @@ describe("API", () => {
         const { data: respondedRoutineActivity } = await axios.post(
           `${API_URL}/api/routines/${newRoutine.id}/activities`,
           { routineId: newRoutine.id, ...routineActivityToCreateAndUpdate },
-          { headers: { "Authorization": `Bearer ${token}` } }
+          { headers: { Authorization: `Bearer ${token}` } }
         );
         expect(respondedRoutineActivity.routineId).toBe(newRoutine.id);
         expect(respondedRoutineActivity.activityId).toBe(
@@ -322,7 +322,7 @@ describe("API", () => {
           duplicateIds = await axios.post(
             `${API_URL}/api/routines/${newRoutine.id}/activities`,
             routineActivityToCreateAndUpdate,
-            { headers: { "Authorization": `Bearer ${token}` } }
+            { headers: { Authorization: `Bearer ${token}` } }
           );
         } catch (err) {
           duplicateIdsResp = err.response;
@@ -344,7 +344,7 @@ describe("API", () => {
         const { data: respondedRoutineActivity } = await axios.patch(
           `${API_URL}/api/routine_activities/${routineActivityToCreateAndUpdate.id}`,
           newRoutineActivityData,
-          { headers: { "Authorization": `Bearer ${token}` } }
+          { headers: { Authorization: `Bearer ${token}` } }
         );
         expect(respondedRoutineActivity.count).toEqual(
           newRoutineActivityData.count
@@ -360,7 +360,7 @@ describe("API", () => {
           respondedRoutineActivity = await axios.patch(
             `${API_URL}/api/routine_activities/${4}`,
             newRoutineActivityData,
-            { headers: { "Authorization": `Bearer ${token}` } }
+            { headers: { Authorization: `Bearer ${token}` } }
           );
         } catch (err) {
           errRespondedRoutineActivity = err.response;
@@ -373,7 +373,7 @@ describe("API", () => {
       it("Removes an activity from a routine, uses hard delete", async () => {
         const { data: deletedRoutineActivity } = await axios.delete(
           `${API_URL}/api/routine_activities/${routineActivityToCreateAndUpdate.id}`,
-          { headers: { "Authorization": `Bearer ${token}` } }
+          { headers: { Authorization: `Bearer ${token}` } }
         );
         const shouldBeDeleted = await getRoutineActivityById(
           deletedRoutineActivity.id
@@ -394,7 +394,7 @@ describe("API", () => {
         try {
           respondedRoutineActivity = await axios.delete(
             `${API_URL}/api/routine_activities/${4}`,
-            { headers: { "Authorization": `Bearer ${token}` } }
+            { headers: { Authorization: `Bearer ${token}` } }
           );
         } catch (err) {
           errRespondedRoutineActivity = err.response;
