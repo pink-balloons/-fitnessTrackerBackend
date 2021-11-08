@@ -15,6 +15,9 @@ server.use(morgan("dev"));
 
 server.use(express.json());
 
+const axios = require("axios");
+axios.defaults.adapter = require("axios/lib/adapters/http");
+
 server.use("/api", require("./api"));
 // below is the same as above
 // const apiRouter = require("./api");
@@ -25,7 +28,8 @@ server.use("*", (req, res, next) => {
 });
 
 server.use((error, req, res, next) => {
-  res.status(500).send({ error: error.message });
+  res.status(500)
+  res.send({ error: error.message });
 });
 
 const client = require("./db/client");

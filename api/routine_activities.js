@@ -1,5 +1,6 @@
 const express = require("express");
 const routineActivitiesRouter = express.Router();
+
 const { requireUser } = require("./utils");
 const {
   updateRoutineActivity,
@@ -61,5 +62,17 @@ routineActivitiesRouter.delete(
     }
   }
 );
+
+
+// routineActivitiesRouter.patch(
+//   "/:routineActivityId",
+//   async (req, res, next) => {}
+// );
+
+// routineActivitiesRouter.delete(
+//   "/:routineActivityId",
+//   async (req, res, next) => {}
+// );
+
 
 module.exports = routineActivitiesRouter;

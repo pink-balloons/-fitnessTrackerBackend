@@ -35,7 +35,6 @@ async function getUser({ username, password }) {
       [username]
     );
 
-    
     if (!user) {
       return;
     }
@@ -43,13 +42,7 @@ async function getUser({ username, password }) {
     if (user.password !== password) {
       return;
     }
-    // else {
-    //   throw Error("Invalid username or password");
-    // }
-
     delete user.password;
-
-    delete user.password
 
     return user;
   } catch (error) {
@@ -79,18 +72,19 @@ async function getUserById(id) {
 
 async function getUserByUsername(username) {
   try {
-    const {
-      rows: [user],
-    } = await client.query(
+    const { rows } = await client.query(
       `
     SELECT * FROM users
     WHERE username=$1;
     `,
       [username]
     );
+    if (!rows || !rows.length) {
+      return null;
+    }
 
-    delete user.password;
-
+    // delete user.password;
+    const [user] = rows;
     return user;
   } catch (error) {
     throw error;
