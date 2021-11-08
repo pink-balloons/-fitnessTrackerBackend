@@ -139,7 +139,7 @@ describe("API", () => {
         expect(noTokenErrResp.data).toBeTruthy();
       });
     });
-    xdescribe("GET /users/:username/routines", () => {
+    describe("GET /users/:username/routines", () => {
       it("Gets a list of public routines for a particular user.", async () => {
         const userId = 2;
         const userWithRoutines = await getUserById(userId);
@@ -189,7 +189,7 @@ describe("API", () => {
         activityToCreateAndUpdate = respondedActivity;
       });
     });
-    xdescribe("PATCH /activities/:activityId (*)", () => {
+    describe("PATCH /activities/:activityId (*)", () => {
       it("Anyone can update an activity (yes, this could lead to long term problems a la wikipedia)", async () => {
         const newActivityData = {
           name: "Double Bicep Curls",
@@ -206,7 +206,7 @@ describe("API", () => {
         );
       });
     });
-    xdescribe("GET /activities/:activityId/routines", () => {
+    describe("GET /activities/:activityId/routines", () => {
       it("Get a list of all public routines which feature that activity", async () => {
         const [testRoutine] = await getAllPublicRoutines();
         const [testActivity] = testRoutine.activities;
@@ -218,7 +218,7 @@ describe("API", () => {
       });
     });
   });
-  xdescribe("Routines", () => {
+  describe("Routines", () => {
     let routineToCreateAndUpdate = {
       isPublic: true,
       name: "Elliptical Day",

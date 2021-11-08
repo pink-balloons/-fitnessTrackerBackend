@@ -4,6 +4,7 @@ const {
   getAllActivities,
   updateActivity,
 } = require("../db/activities");
+const { getPublicRoutinesByActivity } = require("../db/routines");
 const { requireUser } = require("./utils");
 const activityRouter = express.Router();
 
@@ -21,10 +22,8 @@ activityRouter.get("/", async (req, res, next) => {
 });
 
 activityRouter.post("/", requireUser, async (req, res, next) => {
-  console.log("1");
   try {
     const { name, description } = req.body;
-    console.log("2");
 
     if (name && description) {
       const createdActivity = await createActivity({ name, description });
@@ -38,8 +37,6 @@ activityRouter.post("/", requireUser, async (req, res, next) => {
 });
 
 activityRouter.patch("/:activityId", async (req, res, next) => {
-  console.log("body!!!!!!!!!");
-
   const { name, description } = req.body;
   const { activityId } = req.params;
 
@@ -51,6 +48,21 @@ activityRouter.patch("/:activityId", async (req, res, next) => {
         description,
       });
       res.send(updatedActivity);
+    } else {
+      res.send({ message: "Missing fields" });
+    }
+  } catch ({ name, message }) {
+    next({ name, message });
+  }
+});
+
+activityRouter.get("/:activityId/routines", async (req, res, next) => {
+  const { activityId } = req.params;
+
+  try {
+    if (activityId) {
+      const routine = await getPublicRoutinesByActivity({ activityId });
+      res.send(routine);
     } else {
       res.send({ message: "Missing fields" });
     }

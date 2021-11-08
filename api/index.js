@@ -30,9 +30,9 @@ apiRouter.use(async (req, res, next) => {
 
     try {
       const parsedToken = jwt.verify(token, JWT_SECRET);
-      console.log(parsedToken,"parsed token")
-      
-      const id = parsedToken && parsedToken.id
+      console.log(parsedToken, "parsed token");
+
+      const id = parsedToken && parsedToken.id;
       if (id) {
         req.user = await getUserById(id);
         next();
@@ -57,19 +57,21 @@ apiRouter.use(async (req, res, next) => {
 });
 
 apiRouter.use((req, res, next) => {
-  console.log(req.user, '!!!!')
+  console.log(req.user, "!!!!");
   if (req.user) {
     console.log("User is set:", req.user);
   }
   next();
 });
 
-
 const usersRouter = require("./users");
 apiRouter.use("/users", usersRouter);
 
 const activityRouter = require("./activities");
 apiRouter.use("/activities", activityRouter);
+
+const routineRouter = require("./routines");
+apiRouter.use("/routines", routineRouter);
 
 // apiRouter.use((error, req, res, next) => {
 //   res.send(error);
