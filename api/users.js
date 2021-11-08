@@ -2,7 +2,7 @@ const express = require("express");
 const usersRouter = express.Router();
 const jwt = require("jsonwebtoken");
 const { createUser, getUser, getUserByUsername } = require("../db/users");
-const { getAllRoutinesByUser } = require("../db/routines");
+const { getPublicRoutinesByUser } = require("../db/routines");
 const { JWT_SECRET = "neverTell" } = process.env;
 const { requireUser } = require("./utils");
 
@@ -99,32 +99,16 @@ usersRouter.post("/register", async (req, res, next) => {
 
 usersRouter.get("/:username/routines", async (req, res, next) => {
   const { username } = req.params;
-
   try {
     if (username) {
-      const privateRoutines = getAllRoutinesByUser({ username });
-      res.send(privateRoutines);
+      const publicRoutines = await getPublicRoutinesByUser({ username });
+      res.send(publicRoutines);
     } else {
-      res.send({ message: "Missing fields" });
+      next({ name: "UsernameError", message: "Missing fields" });
     }
-  } catch ({ name, message }) {
-    next({ name, message });
+  } catch (error) {
+    next(error);
   }
-
-  // const allRoutines = {};
-
-  // try {
-  //   const pubicRoutines = getAllPublicRoutines();
-  //   allRoutines.push(pubicRoutines);
-
-  //   if (username) {
-  //     const privateRoutines = getAllRoutinesByUser({ username });
-  //     allRoutines(privateRoutines);
-  //   }
-  //   res.send(allRoutines);
-  // } catch ({ name, message }) {
-  //   next({ name, message });
-  // }
 });
 
 module.exports = usersRouter;

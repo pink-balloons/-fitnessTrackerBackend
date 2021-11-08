@@ -5,6 +5,7 @@ const {
   createRoutine,
   updateRoutine,
 } = require("../db/routines");
+const { getUserById } = require("../db/users");
 const { requireUser } = require("./utils");
 
 routineRouter.get("/", async (req, res, next) => {
@@ -22,11 +23,15 @@ routineRouter.get("/", async (req, res, next) => {
 
 routineRouter.post("/", requireUser, async (req, res, next) => {
   const { name, goal, isPublic } = req.body;
-  const id = req.user;
-
+  const id = req.user.id;
   try {
     if ((name, goal, isPublic)) {
-      const createdRoutine = await createRoutine({ id, isPublic, name, goal });
+      const createdRoutine = await createRoutine({
+        creatorId: id,
+        isPublic,
+        name,
+        goal,
+      });
       res.send(createdRoutine);
     } else {
       res.send({ message: "Missing fields" });
@@ -56,5 +61,9 @@ routineRouter.patch("/:routineId", async (req, res, next) => {
     next({ name, message });
   }
 });
+
+// routineRouter.delete("/:routineId", async (req, res, next) => {});
+
+// routineRouter.post("/:routineId/activities", async (req, res, next) => {});
 
 module.exports = routineRouter;
