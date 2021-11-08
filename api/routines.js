@@ -4,6 +4,7 @@ const {
   getAllPublicRoutines,
   createRoutine,
   updateRoutine,
+  destroyRoutine
 } = require("../db/routines");
 const { getUserById } = require("../db/users");
 const { requireUser } = require("./utils");
@@ -44,9 +45,8 @@ routineRouter.post("/", requireUser, async (req, res, next) => {
 routineRouter.patch("/:routineId", async (req, res, next) => {
   const { routineId } = req.params;
   const { name, goal, isPublic } = req.body;
-
+    console.log(goal, "DAT GOAL")
   try {
-    if ((routineId, name, goal, isPublic)) {
       const updatedRoutine = await updateRoutine({
         id: routineId,
         name,
@@ -54,15 +54,21 @@ routineRouter.patch("/:routineId", async (req, res, next) => {
         isPublic,
       });
       res.send(updatedRoutine);
-    } else {
-      res.send({ message: "Missing fields" });
-    }
-  } catch ({ name, message }) {
-    next({ name, message });
+
+  } catch (error) {
+    next({ name: "MissingFieldsError", message: "Missing Information" });
   }
 });
 
-// routineRouter.delete("/:routineId", async (req, res, next) => {});
+routineRouter.delete("/:routineId", requireUser, async (req, res, next) => {
+    const id = req.params.routineId
+    try {
+        const destroyed = await destroyRoutine(id)
+        res.send(destroyed)
+    } catch (error) {
+        next(error)
+    }
+});
 
 // routineRouter.post("/:routineId/activities", async (req, res, next) => {});
 
