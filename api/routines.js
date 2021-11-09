@@ -4,8 +4,12 @@ const {
   getAllPublicRoutines,
   createRoutine,
   updateRoutine,
-  destroyRoutine
+  destroyRoutine,
 } = require("../db/routines");
+const {
+  getRoutineActivitiesByRoutine,
+  addActivityToRoutine,
+} = require("../db/routines_activities");
 const { getUserById } = require("../db/users");
 const { requireUser } = require("./utils");
 
@@ -45,31 +49,65 @@ routineRouter.post("/", requireUser, async (req, res, next) => {
 routineRouter.patch("/:routineId", async (req, res, next) => {
   const { routineId } = req.params;
   const { name, goal, isPublic } = req.body;
-    console.log(goal, "DAT GOAL")
+  console.log(goal, "DAT GOAL");
   try {
-      const updatedRoutine = await updateRoutine({
-        id: routineId,
-        name,
-        goal,
-        isPublic,
-      });
-      res.send(updatedRoutine);
-
+    const updatedRoutine = await updateRoutine({
+      id: routineId,
+      name,
+      goal,
+      isPublic,
+    });
+    res.send(updatedRoutine);
   } catch (error) {
     next({ name: "MissingFieldsError", message: "Missing Information" });
   }
 });
 
 routineRouter.delete("/:routineId", requireUser, async (req, res, next) => {
-    const id = req.params.routineId
-    try {
-        const destroyed = await destroyRoutine(id)
-        res.send(destroyed)
-    } catch (error) {
-        next(error)
-    }
+  const id = req.params.routineId;
+  try {
+    const destroyed = await destroyRoutine(id);
+    res.send(destroyed);
+  } catch (error) {
+    next(error);
+  }
 });
 
-// routineRouter.post("/:routineId/activities", async (req, res, next) => {});
+routineRouter.post("/:routineId/activities", async (req, res, next) => {
+  try {
+    const { routineId } = req.params;
+    const { activityId, count, duration } = req.body;
+    const foundActivities = await getRoutineActivitiesByRoutine({
+      id: routineId,
+    });
+    const filteredActivity =
+      foundActivities &&
+      foundActivities.filter((e) => e.activityId === activityId);
+
+    if (filteredActivity && filteredActivity.length) {
+      next({
+        name: "Error",
+        message: "Routine by this id already exists",
+      });
+    } else {
+      const activity = await addActivityToRoutine({
+        routineId,
+        activityId,
+        count,
+        duration,
+      });
+      if (activity) {
+        res.send(activity);
+      } else {
+        next({
+          name: "Error",
+          message: "Unable to add activity to routine",
+        });
+      }
+    }
+  } catch (error) {
+    next(error);
+  }
+});
 
 module.exports = routineRouter;
