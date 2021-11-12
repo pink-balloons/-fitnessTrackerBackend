@@ -3,7 +3,6 @@
 // export the api router
 const express = require("express");
 const apiRouter = express.Router();
-const client = require("../db/client");
 const jwt = require("jsonwebtoken");
 const { JWT_SECRET } = process.env;
 const { getUserById } = require("../db/users");

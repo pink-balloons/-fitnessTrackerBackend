@@ -10,7 +10,6 @@ const {
   getRoutineActivitiesByRoutine,
   addActivityToRoutine,
 } = require("../db/routines_activities");
-const { getUserById } = require("../db/users");
 const { requireUser } = require("./utils");
 
 routineRouter.get("/", async (req, res, next) => {
